@@ -1,0 +1,22 @@
+#result_wrapper{
+	margin: auto;
+	font-size: 5vw;
+	text-align: center;
+
+	#result{
+	margin: 50px;
+	}
+	
+	#reset{
+		box-sizing: border-box;
+		padding: 30px 50px;
+		margin: 50px;
+		border: 1px solid black;
+		border-radius: 5px;
+		background-color: rgb(220,220,220);
+
+		&:hover{
+			background-color: rgb(240,240,240);
+		}
+	}
+}

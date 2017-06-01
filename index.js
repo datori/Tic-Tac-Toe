@@ -1,17 +1,72 @@
 $(document).ready(function(){
-	game.start();
+	app_render.render_choice();
 });
-	
+
+const app_render = {
+	render_choice: function(){
+		var app_render = this;
+		$("#app").html(`
+			<section id="choice-wrapper">
+				<a class="symbol">X</a>
+				<a class="symbol">O</a>
+			</section>
+		`);
+
+		$(".symbol").click(function(){
+			app_render.render_game();
+			game.start($(this).text());
+		});
+	},
+	render_game: function(){
+		$("#app").html(`
+			<section id="board-wrapper">
+				<div class="cell" id="cell0"></div>
+				<div class="cell" id="cell1"></div>
+				<div class="cell" id="cell2"></div>
+				<div class="cell" id="cell3"></div>
+				<div class="cell" id="cell4"></div>
+				<div class="cell" id="cell5"></div>
+				<div class="cell" id="cell6"></div>
+				<div class="cell" id="cell7"></div>
+				<div class="cell" id="cell8"></div>
+			</section>
+		`);
+	},
+	render_result: function(winner){
+		var win_statement;
+		switch(winner){
+			case "X":
+				win_statement = "The winner is X";
+				break;
+			case "O":
+				win_statement = "The winner is O";
+				break;
+			case "Tie":
+				win_statement = "It's a tie!";
+		}
+		
+		$("#app").html(`
+			<section id="result_wrapper">
+				<h1 id="result">${win_statement}</h1>
+				<a id="reset">Reset</a>
+			</section>
+		`);
+
+		$("#reset").click(function(){
+			app_render.render_choice();
+		});
+	}
+}
+
 const game = {
 	player: "",
 	AI: "",
 	winner: "",
 	board: ["","","","","","","","",""],
-	board_DOM: [$("#cell0"),$("#cell1"),$("#cell2"),$("#cell3"),$("#cell4"),$("#cell5"),$("#cell6"),$("#cell7"),$("#cell8")],
-	start: function(){
+	start: function(symbol){
 		// Handle initial startup logic.
 		this.handlers();
-		this.player = prompt("X or O?");
+		this.player= symbol;
 		switch(this.player){
 			case "X":
 				this.AI = "O";
@@ -29,8 +84,12 @@ const game = {
 			if (game.moveValidate(cell) && game.gameState()){
 				game.board[cell] = game.player;
 				game.renderBoard();
-				game.AIMove();
+
+				if (game.gameState()){
+					game.AIMove();
+				}
 			}
+
 		});
 	},
 	AIMove: function(){
@@ -100,12 +159,20 @@ const game = {
 		}	
 	},
 	renderBoard: function(){
+		board_DOM = [$("#cell0"),$("#cell1"),$("#cell2"),$("#cell3"),$("#cell4"),$("#cell5"),$("#cell6"),$("#cell7"),$("#cell8")];
 		// Update board_DOM with contents of board.
 		for (var i=0; i<9; i++){
-			this.board_DOM[i].text(this.board[i]);
+			board_DOM[i].text(this.board[i]);
 		}
 		if (!this.gameState()){
-			alert(this.winner);
+			app_render.render_result(this.winner);
+			this.resetGame();
 		}
+	},
+	resetGame: function(){
+		this.player = "";
+		this.AI = "";
+		this.winner = "";
+		this.board = ["","","","","","","","",""];
 	}
 }
